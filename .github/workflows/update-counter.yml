@@ -23,12 +23,10 @@ jobs:
         with:
           script: |
             const response = await github.rest.users.getByUsername({
-              username: context.repo.owner
+              username: github.context.repo.owner
             });
-            return {
-              name: response.data.name,
-              email: response.data.email || "YourEmail@example.com" // Fallback if email is not public
-            };
+            core.setOutput("name", response.data.name);
+            core.setOutput("email", response.data.email || "YourEmail@example.com"); // Fallback if email is not public
 
       - name: Set up Git
         run: |
