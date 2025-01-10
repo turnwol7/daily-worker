@@ -1,0 +1,7 @@
+{
+  "name": "Daily Worker Dev Container",
+  "extensions": [
+    "GitHub.vscode-github-actions",
+    "GitHub.copilot-chat"
+  ]
+}
