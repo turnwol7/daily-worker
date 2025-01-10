@@ -23,7 +23,7 @@ jobs:
         with:
           script: |
             const response = await github.rest.users.getByUsername({
-              username: github.context.actor
+              username: "essanousy"
             });
             core.setOutput("name", response.data.name);
             core.setOutput("email", response.data.email || "YourEmail@example.com"); // Fallback if email is not public
