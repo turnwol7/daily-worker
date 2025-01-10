@@ -22,7 +22,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const response = await github.users.getByUsername({
+            const response = await octokit.users.getByUsername({
               username: context.repo.owner
             });
             return {
