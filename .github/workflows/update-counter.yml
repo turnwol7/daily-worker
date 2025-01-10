@@ -1,28 +1,35 @@
-name: Increment Counter
+name: Update Counter
 
 on:
   schedule:
-    - cron: '30 1 * * *' # Runs daily at 1:30 AM UTC (9:30 PM Atlantic Time)
-  workflow_dispatch: # Add this to enable manual runs
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  increment:
+  update-counter:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_USER_NAME: ${{ github.repository_owner }}
+      GITHUB_USER_EMAIL: "YourEmail@example.com"
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Run increment script
+      - name: Set up Git
         run: |
-          chmod +x increment.sh
-          ./increment.sh
+          git config user.name "${{ env.GITHUB_USER_NAME }}"
+          git config user.email "${{ env.GITHUB_USER_EMAIL }}"
+
+      - name: Increment counter
+        run: |
+          echo $(( $(cat counter.txt) + 1 )) > counter.txt
 
       - name: Commit and push changes
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          git config user.name "Mohamed ES-SANOUSY"
-          git config user.email "mohamed.essanousy@gmail.com"
           git add counter.txt
           git commit -m "Incremented counter to $(cat counter.txt)"
-          git push https://$PAT_TOKEN@github.com/essanousy/daily-worker.git HEAD:main
+          git push https://$PAT_TOKEN@github.com/${{ github.repository }}.git ${{ github.ref }}
