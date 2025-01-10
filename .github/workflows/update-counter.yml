@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      REPO_OWNER: ${{ github.repository_owner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -23,7 +24,7 @@ jobs:
         with:
           script: |
             const response = await github.rest.users.getByUsername({
-              username: "essanousy"
+              username: process.env.REPO_OWNER
             });
             core.setOutput("name", response.data.name);
             core.setOutput("email", response.data.email || "YourEmail@example.com"); // Fallback if email is not public
