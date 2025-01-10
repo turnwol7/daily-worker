@@ -12,17 +12,28 @@ jobs:
   update-counter:
     runs-on: ubuntu-latest
     env:
-      GITHUB_USER_NAME: ${{ github.repository_owner }}
-      GITHUB_USER_EMAIL: "YourEmail@example.com"
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Fetch GitHub user details
+        id: fetch-details
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const response = await github.users.getByUsername({
+              username: context.repo.owner
+            });
+            return {
+              name: response.data.name,
+              email: response.data.email || "YourEmail@example.com" // Fallback if email is not public
+            };
+
       - name: Set up Git
         run: |
-          git config user.name "${{ env.GITHUB_USER_NAME }}"
-          git config user.email "${{ env.GITHUB_USER_EMAIL }}"
+          git config user.name "${{ steps.fetch-details.outputs.name }}"
+          git config user.email "${{ steps.fetch-details.outputs.email }}"
 
       - name: Increment counter
         run: |
